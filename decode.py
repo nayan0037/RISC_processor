@@ -13,7 +13,6 @@ class decode_stage():
         self.instr=instr
 
         # if self.instr.operand1 in self.processor.hazardList:
-        #     # print("toh act bsdk")
         #     self.processor.stall = True
         # if self.instr.operand2 in self.processor.hazardList:
         #     self.processor.stall = True
