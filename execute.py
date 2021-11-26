@@ -10,8 +10,14 @@ class execute_stage():
         if self.instr.opcode != "nop" and self.instr.aluOp:
             if self.instr.forwardEE_opr1:
                 self.instr.opr1Value = self.processor.pipeline[4].instr.result
+            elif self.instr.forwardME_opr1:
+                self.instr.opr1Value = self.processor.pipeline[5].instr.result
             if self.instr.forwardEE_opr2:
                 self.instr.opr2Value = self.processor.pipeline[4].instr.result
+            elif self.instr.forwardME_opr2:
+                self.instr.opr2Value = self.processor.pipeline[5].instr.result
+
+
             if self.instr.opcode == "lw" or self.instr.opcode == "sw":
                 self.instr.result = int(self.instr.opr1Value) + int(self.instr.immediate)
             elif self.instr.opcode == "bne":
