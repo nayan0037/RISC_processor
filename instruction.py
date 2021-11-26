@@ -25,6 +25,12 @@ class instruction_class(object):
         self.result = None
         self.is_branch = False
         self.type = None    
+        self.forwardEE_opr1 = False
+        self.forwardEE_opr2 = False
+        self.forwardME_opr1 = False
+        self.forwardME_opr2 = False
+        self.is_load = False
+
 
     def decode(self,instruction):
         # print(instruction)
@@ -58,6 +64,7 @@ class instruction_class(object):
                 self.memRead = True
                 self.regWrite = True
                 self.aluOp = True
+                self.is_load = True
 
             elif(self.opcode == "sw"):
                 self.operand2 = s[1]

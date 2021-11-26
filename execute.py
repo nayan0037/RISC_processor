@@ -8,13 +8,10 @@ class execute_stage():
         
     def advance(self):
         if self.instr.opcode != "nop" and self.instr.aluOp:
-            if self.instr.operand1 in self.processor.hazardList :
-                self.processor.nstall = True
-                return
-
-            if self.instr.operand2 in self.processor.hazardList :
-                self.processor.nstall = True
-                return
+            if self.instr.forwardEE_opr1:
+                self.instr.opr1Value = self.processor.pipeline[4].instr.result
+            if self.instr.forwardEE_opr2:
+                self.instr.opr2Value = self.processor.pipeline[4].instr.result
             if self.instr.opcode == "lw" or self.instr.opcode == "sw":
                 self.instr.result = int(self.instr.opr1Value) + int(self.instr.immediate)
             elif self.instr.opcode == "bne":

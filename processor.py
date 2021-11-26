@@ -60,7 +60,21 @@ class processor(object):
         j=0
         for p in self.pipeline:
             p.advance()
-            print(pipe[j] +": " + p.instr.instruction)
+            if j == 3:
+                forward_text = "\t"
+                if p.instr.forwardEE_opr1:
+                    forward_text += "forwarded opr 1 EE "
+                if p.instr.forwardEE_opr2:
+                    forward_text += "forwarded opr 2 EE "
+                if p.instr.forwardME_opr1:
+                    forward_text += "forwarded opr 1 ME "
+                if p.instr.forwardME_opr2:
+                    forward_text += "forwarded opr 2 ME "
+
+                print(pipe[j] +": " + p.instr.instruction + forward_text)
+            else:
+                print(pipe[j] +": " + p.instr.instruction)
+
             j += 1               
         self.stall = self.nstall
 
@@ -86,13 +100,14 @@ class processor(object):
     def run(self):
         while not self.done:
             self.step()
-            x=input()
             self.debug()
 
     def debug(self):
         print("Hazard List : ",self.hazardList)
-        if self.stall:
-            print("current cycle was stalled")
+            
+        # if self.stall:
+        #     print("current cycle was stalled")
+        x= input()
 
         self.printRegFile()
         self.printMem()

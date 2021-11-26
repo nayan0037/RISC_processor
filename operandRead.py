@@ -9,11 +9,17 @@ class operandRead_stage():
             if not self.instr.operand1 in self.processor.hazardList:
                 self.instr.opr1Value = self.processor.registers[self.instr.operand1]
             else: 
-                self.processor.nstall = True
+                if self.instr.operand1 == self.processor.pipeline[3].instr.dest and not self.processor.pipeline[3].instr.is_load:
+                    self.instr.forwardEE_opr1 = True
+                else:
+                    self.processor.nstall = True
             if (self.instr.is_branch or self.instr.opcode == "sw" or self.instr.type == "rtype"):
                     if not self.instr.operand2 in self.processor.hazardList:
                         self.instr.opr2Value = self.processor.registers[self.instr.operand2]
                     else:
-                        self.processor.nstall = True
-
+                        if self.instr.operand2 == self.processor.pipeline[3].instr.dest and not self.processor.pipeline[3].instr.is_load:
+                            self.instr.forwardEE_opr2 = True
+                        else:
+                            self.processor.nstall = True
+    
         ######## handle jump here

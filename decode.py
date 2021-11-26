@@ -12,17 +12,12 @@ class decode_stage():
         instr.decode(self.instr)
         self.instr=instr
 
-        # if self.instr.operand1 in self.processor.hazardList:
-        #     self.processor.stall = True
-        # if self.instr.operand2 in self.processor.hazardList:
-        #     self.processor.stall = True
-
         if(self.instr.is_branch):
             self.instr.opr2Value = self.instr.immediate
         if self.instr.regWrite:
             if(self.instr.dest != "$r0" and (not self.processor.stall)):
                 self.processor.hazardList.append(self.instr.dest)
-                if self.instr.opcode != "lw":
-                    self.processor.hazardType.append("Execute")
-                else:
+                if self.instr.is_load:
                     self.processor.hazardType.append("Memory")
+                else:
+                    self.processor.hazardType.append("Execute")
