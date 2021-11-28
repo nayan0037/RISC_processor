@@ -52,6 +52,7 @@ class branchPred(object):
             self.history.append("00")
             return (0,"0")
 
+
     def print_branchPred(self):
         if self.noPred:
             return

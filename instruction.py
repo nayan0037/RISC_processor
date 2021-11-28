@@ -2,7 +2,7 @@ import re
 
 class instruction_class(object):
     instructionSet = {
-        'rtype': ['add', 'sub', 'and', 'or', 'jr', 'nor', 'slt'],
+        'rtype': ['add', 'sub', 'and', 'or', 'nor', 'slt'],
         'itype': ['addi', 'subi', 'ori', 'bne', 'beq', 'lw', 'sw'],
         'jtype': ['j']
     }
@@ -32,8 +32,7 @@ class instruction_class(object):
         self.is_load = False
         self.is_store = False
         self.PC = False
-        self.speculative = False
-
+        self.is_jump = False
 
     def decode(self,instruction):
         # print(instruction)
@@ -45,17 +44,12 @@ class instruction_class(object):
         self.opcode = s[0].lower()
         if self.opcode in self.instructionSet['rtype']:
             self.type = "rtype"
-            if(self.opcode == "jr"):
-                self.operand1 = s[1]
-                self.regRead = True
-                self.aluOp = True
-            else:
-                self.dest = s[1]
-                self.operand1 = s[2]
-                self.operand2 = s[3]
-                self.regRead = True
-                self.regWrite = True
-                self.aluOp = True
+            self.dest = s[1]
+            self.operand1 = s[2]
+            self.operand2 = s[3]
+            self.regRead = True
+            self.regWrite = True
+            self.aluOp = True
 
         elif self.opcode in self.instructionSet['itype']:
             self.type = "itype"
@@ -100,6 +94,7 @@ class instruction_class(object):
                 self.BTA = int(s[1], 16)
             else:
                 self.BTA = s[1]
+            self.is_jump = True
 
         elif self.opcode == "nop":
             return

@@ -19,6 +19,7 @@ class processor(object):
         self.branched = False
         self.stall = False
         self.nstall = False
+        self.bstall = False
         self.branch_pred = branchPred(5)
         self.branch_pred.noPred = False
         self.branch_hist = []
@@ -37,23 +38,32 @@ class processor(object):
         self.main_memory = {int(i): 0 for i in range(int(0x1000))}
         self.programCounter = 0x0000
         self.instructionSet = instrSet
-
+        self.speculative = False
         #load prog_memory
         for i in range(len(instrSet)):
             self.prog_memory[i*4] = instrSet[i]
 
     def step(self):
         self.cycleCount += 1
-        self.pipeline[5] = writeBack_stage(self.pipeline[4].instr,self)
-        self.pipeline[4] = memory_stage(self.pipeline[3].instr,self)
-        self.pipeline[3] = execute_stage(self.pipeline[2].instr,self)    
-        if self.stall :  
-            self.pipeline[3] = execute_stage(instruction_class(),self)    
-            self.nstall = False
-        else :
-            self.pipeline[2] = operandRead_stage(self.pipeline[1].instr,self)
+        if self.bstall:
+            self.pipeline[5] = writeBack_stage(self.pipeline[4].instr,self)
+            self.pipeline[4] = memory_stage(self.pipeline[3].instr,self)
+            self.pipeline[3] = execute_stage(self.pipeline[2].instr,self)    
+            self.pipeline[2] = operandRead_stage(instruction_class(),self)
             self.pipeline[1] = decode_stage(self.pipeline[0].instr,self)
             self.pipeline[0] = fetch_stage(instruction_class(), self)
+            self.bstall = False
+        else:
+            self.pipeline[5] = writeBack_stage(self.pipeline[4].instr,self)
+            self.pipeline[4] = memory_stage(self.pipeline[3].instr,self)
+            self.pipeline[3] = execute_stage(self.pipeline[2].instr,self)    
+            if self.stall :  
+                self.pipeline[3] = execute_stage(instruction_class(),self)    
+                self.nstall = False
+            else :
+                self.pipeline[2] = operandRead_stage(self.pipeline[1].instr,self)
+                self.pipeline[1] = decode_stage(self.pipeline[0].instr,self)
+                self.pipeline[0] = fetch_stage(instruction_class(), self)
 
         print("\n")
         print("Clock Count: "+str(self.cycleCount))
@@ -103,7 +113,7 @@ class processor(object):
             self.debug()
     
     def debug(self):
-        x= input()
+        # x= input()
         self.printRegFile()
         self.printMem()
         print("<PC> : ",str(self.programCounter))

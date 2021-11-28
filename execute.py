@@ -27,6 +27,7 @@ class execute_stage():
             if self.instr.is_load or self.instr.is_store:
                 self.instr.result = int(self.instr.opr1Value) + int(self.instr.immediate)
             elif self.instr.opcode == "bne":
+                self.processor.speculative = False
                 if self.instr.opr1Value != self.instr.opr2Value:
                     ## taken
                     PC = self.instr.PC
