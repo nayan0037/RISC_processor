@@ -8,10 +8,10 @@ class fetch_stage(object):
 
     def advance(self):
         instr1 = self.processor.prog_memory[self.processor.programCounter]
-        if(not self.processor.stall):
+        if(not self.processor.stall and instr1 != "nop"):
             self.processor.instrCount += 1
         self.instr=instruction_class()
         self.instr.instruction = instr1
         self.instr.PC = self.processor.programCounter
-        print(self.instr.PC)
+        # print(self.instr.PC)
         self.processor.programCounter += 4

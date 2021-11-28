@@ -33,11 +33,10 @@ class processor(object):
         self.pipeline[5] = writeBack_stage(nop,self)
 
         self.registers = {"$r"+str(i):"0" for i in range(32)}
-        self.prog_memory = {int(i*4):"nop" for i in range(int(0x60/4))}
-        self.main_memory = {int(i): 0 for i in range(int(0x60))}
+        self.prog_memory = {int(i*4):"nop" for i in range(int(0x1000/4))}
+        self.main_memory = {int(i): 0 for i in range(int(0x1000))}
         self.programCounter = 0x0000
         self.instructionSet = instrSet
-
 
         #load prog_memory
         for i in range(len(instrSet)):
@@ -58,6 +57,7 @@ class processor(object):
 
         print("\n")
         print("Clock Count: "+str(self.cycleCount))
+        print("Instr Count: "+str(self.instrCount))
 
         j=0
         if self.stall:
@@ -91,8 +91,6 @@ class processor(object):
 
     def check_done(self):
         self.done = True
-        # if(self.cycleCount == 12):
-        #     return
 
         for p in self.pipeline:
             if (p.instr.instruction != "nop"):
@@ -105,7 +103,7 @@ class processor(object):
             self.debug()
     
     def debug(self):
-        # x= input()
+        x= input()
         self.printRegFile()
         self.printMem()
         print("<PC> : ",str(self.programCounter))
