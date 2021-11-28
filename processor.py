@@ -110,7 +110,7 @@ class processor(object):
         self.printMem()
         print("<PC> : ",str(self.programCounter))
         self.branch_pred.print_branchPred()
-        # print(("<CPI> : {:.3f}".format(float(self.cycleCount) / float(self.instrCount))))
+        print(("<CPI> : {:.3f}".format(float(self.cycleCount) / float(self.instrCount))))
 
     def printRegFile(self):
         print ("<Register File>")
