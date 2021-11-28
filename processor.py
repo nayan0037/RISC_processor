@@ -15,12 +15,10 @@ class processor(object):
     def __init__(self,instrSet):
         self.instrCount = 0
         self.cycleCount = 0
-        self.hazardList = []
         self.done = False
         self.branched = False
         self.stall = False
         self.nstall = False
-        self.hazardType = []
         self.branch_pred = branchPred(5)
         self.branch_pred.noPred = False
         self.branch_hist = []
@@ -62,6 +60,9 @@ class processor(object):
         print("Clock Count: "+str(self.cycleCount))
 
         j=0
+        if self.stall:
+            print("current cycle was stalled")
+
         for p in self.pipeline:
             p.advance() 
             if j == 3:
@@ -82,9 +83,6 @@ class processor(object):
             j += 1               
         self.stall = self.nstall
 
-        # if (self.pipeline[5].instr.regWrite and self.pipeline[5].instr.dest != "$r0"):
-            # self.hazardList.pop(0)
-            
         if (self.stall or self.branched):
             self.programCounter -= 4
             self.branched = False
@@ -107,11 +105,7 @@ class processor(object):
             self.debug()
     
     def debug(self):
-        print("Hazard List : ",self.hazardList)
-            
-        # if self.stall:
-        #     print("current cycle was stalled")
-        x= input()
+        # x= input()
         self.printRegFile()
         self.printMem()
         print("<PC> : ",str(self.programCounter))

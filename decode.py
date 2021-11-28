@@ -9,10 +9,8 @@ class decode_stage():
     def advance(self):
         instr = instruction_class()
         instr.PC = self.instr.PC
-        # print(type(instr))
         instr.decode(self.instr)
         self.instr=instr
-        # self.instr.PC = self.processor.programCounter - 4 
         if(self.instr.is_branch):
             (BTA, pred) = self.processor.branch_pred.predict(self.instr.PC)
             if pred == "1": 

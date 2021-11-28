@@ -13,7 +13,6 @@ class execute_stage():
         self.processor = processor
         
     def advance(self):
-
         if self.instr.opcode != "nop" and self.instr.aluOp:
             if self.instr.forwardEE_opr1:
                 self.instr.opr1Value = self.processor.pipeline[4].instr.result
@@ -56,7 +55,6 @@ class execute_stage():
                         self.processor.pipeline[0] = fetch_stage(instruction_class(),self)
 
                         self.processor.instrCount -= 3
-                        # self.processor.branched = True
                         self.processor.branch_pred.update_pred(self.instr.PC,"0",BTA)
                     # else do nothing
 
