@@ -60,22 +60,38 @@ class execute_stage():
                     # else do nothing
 
             elif self.instr.opcode == "beq":
+                self.processor.speculative = False
                 if self.instr.opr1Value == self.instr.opr2Value:
-                    self.processor.programCounter += int(self.instr.immediate)*4 - 12
-                    ## flush pipeline
-                    self.processor.pipeline[0] = fetch_stage(instruction_class(),self)
-                    self.processor.pipeline[1] = decode_stage(instruction_class(),self)
-                    self.processor.pipeline[2] = operandRead_stage(instruction_class(),self)
-                    self.processor.branched = True
+                    ## taken
+                    PC = self.instr.PC
+                    BTA = PC + int(self.instr.immediate)*4 
+                    if (self.processor.branch_hist.pop(0) != "1" or self.processor.BTA_hist.pop(0) != BTA):
+                        ## flush pipeline
+                        self.processor.programCounter = BTA
+                        self.processor.pipeline[0] = fetch_stage(instruction_class(),self)
+                        self.processor.pipeline[1] = decode_stage(instruction_class(),self)
+                        self.processor.pipeline[2] = operandRead_stage(instruction_class(),self)
+                        self.processor.instrCount -= 3
+                        self.processor.branch_pred.update_pred(self.instr.PC,"1",BTA)
+                    else:
+                        self.processor.pipeline[2] = operandRead_stage(instruction_class(),self)
+                        self.processor.instrCount -= 1
 
-            elif self.instr.opcode == "jr":
-                if self.instr.opr1Value != self.instr.opr2Value:
-                    self.processor.programCounter = int(self.instr.opr1Value)
-                    ## flush pipeline  
-                    self.processor.pipeline[0] = fetch_stage(instruction_class(),self)
-                    self.processor.pipeline[1] = decode_stage(instruction_class(),self)
-                    self.processor.pipeline[2] = operandRead_stage(instruction_class(),self)
-                    self.processor.branched = True
+                else:
+                    ## not taken
+                    PC = self.instr.PC
+                    BTA = PC + 4 
+                    if (self.processor.branch_hist.pop(0) != "0"):
+                    ## flush half pipeline
+                        self.processor.programCounter = BTA
+                        self.processor.pipeline[2] = operandRead_stage(instruction_class(),self)
+                        self.processor.pipeline[1] = decode_stage(instruction_class(),self)
+                        self.processor.pipeline[0] = fetch_stage(instruction_class(),self)
+
+                        self.processor.instrCount -= 3
+                        self.processor.branch_pred.update_pred(self.instr.PC,"0",BTA)
+                    # else do nothing
+
             
             elif self.instr.opcode == "slt":
                 self.instr.result = 1 if self.instr.opr1Value < self.instr.opr2Value else 0

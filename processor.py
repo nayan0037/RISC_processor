@@ -110,7 +110,7 @@ class processor(object):
     def run(self):
         while not self.done:
             self.step()
-            self.debug()
+        self.debug()
     
     def debug(self):
         # x= input()
