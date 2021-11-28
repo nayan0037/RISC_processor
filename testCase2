@@ -1,7 +1,6 @@
 addi $r5,$r0,6
 ori $r4,$r0,7
-bne $r4 $r5 2
-add $r7,$r5,$r4
-sw $r4 1($r5)
+add $r6,$r4,$r0
+sw $r6 1($r5)
 lw $r8 1($r5)
 addi $r6,$r8,9

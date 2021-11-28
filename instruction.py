@@ -30,6 +30,9 @@ class instruction_class(object):
         self.forwardME_opr1 = False
         self.forwardME_opr2 = False
         self.is_load = False
+        self.is_store = False
+        self.PC = False
+        self.speculative = False
 
 
     def decode(self,instruction):
@@ -73,6 +76,7 @@ class instruction_class(object):
                 self.regRead = True
                 self.memWrite = True
                 self.aluOp = True
+                self.is_store = True
 
             elif(self.opcode == "beq" or self.opcode == "bne"):
                 self.operand1 = s[1]

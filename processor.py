@@ -5,6 +5,7 @@ from operandRead import *
 from execute import *
 from memory import *
 from writeBack import *
+from branchPred import *
 
 pipe = ["F","D","O","E","M","W"]
 
@@ -20,7 +21,10 @@ class processor(object):
         self.stall = False
         self.nstall = False
         self.hazardType = []
-        
+        self.branch_pred = branchPred(5)
+        self.branch_pred.noPred = False
+        self.branch_hist = []
+        self.BTA_hist = []
         self.pipeline = [None for x in range(6)]
         nop = instruction_class()
         self.pipeline[0] = fetch_stage(nop,self)
@@ -32,7 +36,7 @@ class processor(object):
 
         self.registers = {"$r"+str(i):"0" for i in range(32)}
         self.prog_memory = {int(i*4):"nop" for i in range(int(0x60/4))}
-        self.main_memory = {int(i*4):0 for i in range(int(0x60/4))}
+        self.main_memory = {int(i): 0 for i in range(int(0x60))}
         self.programCounter = 0x0000
         self.instructionSet = instrSet
 
@@ -59,7 +63,7 @@ class processor(object):
 
         j=0
         for p in self.pipeline:
-            p.advance()
+            p.advance() 
             if j == 3:
                 forward_text = "\t"
                 if p.instr.forwardEE_opr1:
@@ -78,8 +82,8 @@ class processor(object):
             j += 1               
         self.stall = self.nstall
 
-        if (self.pipeline[5].instr.regWrite and self.pipeline[5].instr.dest != "$r0"):
-            self.hazardList.pop(0)
+        # if (self.pipeline[5].instr.regWrite and self.pipeline[5].instr.dest != "$r0"):
+            # self.hazardList.pop(0)
             
         if (self.stall or self.branched):
             self.programCounter -= 4
@@ -101,17 +105,18 @@ class processor(object):
         while not self.done:
             self.step()
             self.debug()
-
+    
     def debug(self):
         print("Hazard List : ",self.hazardList)
             
         # if self.stall:
         #     print("current cycle was stalled")
         x= input()
-
         self.printRegFile()
         self.printMem()
-        # print(("<CPI> : " , float(self.cycles) / float(self.instrCount))) 
+        print("<PC> : ",str(self.programCounter))
+        self.branch_pred.print_branchPred()
+        # print(("<CPI> : {:.3f}".format(float(self.cycleCount) / float(self.instrCount))))
 
     def printRegFile(self):
         print ("<Register File>")

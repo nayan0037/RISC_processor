@@ -1,5 +1,5 @@
 from instruction import *
-
+from branchPred import *
 class decode_stage():
     """docstring for decode_stage"""
     def __init__(self,instruction,processor):
@@ -8,16 +8,16 @@ class decode_stage():
         
     def advance(self):
         instr = instruction_class()
+        instr.PC = self.instr.PC
         # print(type(instr))
         instr.decode(self.instr)
         self.instr=instr
-
+        # self.instr.PC = self.processor.programCounter - 4 
         if(self.instr.is_branch):
+            (BTA, pred) = self.processor.branch_pred.predict(self.instr.PC)
+            if pred == "1": 
+                self.processor.programCounter = BTA
+                self.processor.BTA_hist.append(BTA) 
+            self.processor.branch_hist.append(pred)
             self.instr.opr2Value = self.instr.immediate
-        if self.instr.regWrite:
-            if(self.instr.dest != "$r0" and (not self.processor.stall)):
-                self.processor.hazardList.append(self.instr.dest)
-                if self.instr.is_load:
-                    self.processor.hazardType.append("Memory")
-                else:
-                    self.processor.hazardType.append("Execute")
+            self.processor.speculative = True

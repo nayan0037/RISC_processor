@@ -6,7 +6,7 @@ from pprint import pprint
 def parseFile(filename):
     with open(filename) as f:
         data = list(filter((lambda x: x != '\n'), f.readlines()))
-        instructions = [(a.replace(',',' ').strip()) for a in data]
+        instructions = [(a.replace(',',' ').strip().split("#")[0]) for a in data]
         return instructions
 
 def main():

@@ -6,6 +6,6 @@ class memory_stage():
         
     def advance(self):
         if self.instr.memRead:
-            self.result = self.processor.main_memory[self.instr.result]
+            self.instr.result = self.processor.main_memory[self.instr.result]
         elif self.instr.memWrite:
             self.processor.main_memory[self.instr.result] = self.instr.opr2Value
