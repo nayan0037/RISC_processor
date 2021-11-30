@@ -21,7 +21,7 @@ class processor(object):
         self.nstall = False
         self.bstall = False
         self.branch_pred = branchPred(5)
-        self.branch_pred.noPred = False
+        self.branch_pred.noPred = True
         self.branch_hist = []
         self.BTA_hist = []
         self.pipeline = [None for x in range(6)]
@@ -49,9 +49,13 @@ class processor(object):
             self.pipeline[5] = writeBack_stage(self.pipeline[4].instr,self)
             self.pipeline[4] = memory_stage(self.pipeline[3].instr,self)
             self.pipeline[3] = execute_stage(self.pipeline[2].instr,self)    
-            self.pipeline[2] = operandRead_stage(instruction_class(),self)
-            self.pipeline[1] = decode_stage(self.pipeline[0].instr,self)
-            self.pipeline[0] = fetch_stage(instruction_class(), self)
+            if self.stall :  
+                self.pipeline[3] = execute_stage(instruction_class(),self)    
+                self.nstall = False
+            else :
+                self.pipeline[2] = operandRead_stage(self.pipeline[1].instr,self)
+                self.pipeline[1] = decode_stage(instruction_class(),self)
+                self.pipeline[0] = fetch_stage(instruction_class(), self)
             self.bstall = False
         else:
             self.pipeline[5] = writeBack_stage(self.pipeline[4].instr,self)
@@ -69,10 +73,10 @@ class processor(object):
         print("Clock Count: "+str(self.cycleCount))
         print("Instr Count: "+str(self.instrCount))
 
-        j=0
         if self.stall:
             print("current cycle was stalled")
 
+        j=0
         for p in self.pipeline:
             p.advance() 
             if j == 3:
@@ -92,11 +96,6 @@ class processor(object):
 
             j += 1               
         self.stall = self.nstall
-
-        if (self.stall or self.branched):
-            self.programCounter -= 4
-            self.branched = False
-
         self.check_done()
 
     def check_done(self):
@@ -110,10 +109,10 @@ class processor(object):
     def run(self):
         while not self.done:
             self.step()
-        self.debug()
+            self.debug()
     
     def debug(self):
-        # x= input()
+        # x= input()    
         self.printRegFile()
         self.printMem()
         print("<PC> : ",str(self.programCounter))

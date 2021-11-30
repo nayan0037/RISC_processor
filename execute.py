@@ -35,15 +35,12 @@ class execute_stage():
                     if (self.processor.branch_hist.pop(0) != "1" or self.processor.BTA_hist.pop(0) != BTA):
                         ## flush pipeline
                         self.processor.programCounter = BTA
-                        self.processor.pipeline[0] = fetch_stage(instruction_class(),self)
-                        self.processor.pipeline[1] = decode_stage(instruction_class(),self)
-                        self.processor.pipeline[2] = operandRead_stage(instruction_class(),self)
+                        self.processor.pipeline[0] = fetch_stage(instruction_class(),self.processor)
+                        self.processor.pipeline[1] = decode_stage(instruction_class(),self.processor)
+                        self.processor.pipeline[2] = operandRead_stage(instruction_class(),self.processor)
                         self.processor.instrCount -= 3
                         self.processor.branch_pred.update_pred(self.instr.PC,"1",BTA)
-                    else:
-                        self.processor.pipeline[2] = operandRead_stage(instruction_class(),self)
-                        self.processor.instrCount -= 1
-
+                        
                 else:
                     ## not taken
                     PC = self.instr.PC
@@ -51,9 +48,9 @@ class execute_stage():
                     if (self.processor.branch_hist.pop(0) != "0"):
                     ## flush half pipeline
                         self.processor.programCounter = BTA
-                        self.processor.pipeline[2] = operandRead_stage(instruction_class(),self)
-                        self.processor.pipeline[1] = decode_stage(instruction_class(),self)
-                        self.processor.pipeline[0] = fetch_stage(instruction_class(),self)
+                        self.processor.pipeline[2] = operandRead_stage(instruction_class(),self.processor)
+                        self.processor.pipeline[1] = decode_stage(instruction_class(),self.processor)
+                        self.processor.pipeline[0] = fetch_stage(instruction_class(),self.processor)
 
                         self.processor.instrCount -= 3
                         self.processor.branch_pred.update_pred(self.instr.PC,"0",BTA)

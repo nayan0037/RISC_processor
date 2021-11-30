@@ -1,3 +1,5 @@
+
+
 import re
 
 class instruction_class(object):
@@ -34,14 +36,24 @@ class instruction_class(object):
         self.PC = False
         self.is_jump = False
 
-    def decode(self,instruction):
-        # print(instruction)
-        # print(type(instruction))
+    def decode_opcode(self,instruction):
         instruction = instruction.instruction.strip()
         # print(instruction)
         self.instruction = re.sub('\s+',' ',instruction)
         s = self.instruction.split()
         self.opcode = s[0].lower()
+        if self.opcode == "bne" or self.opcode == "beq":
+            self.is_branch = True
+        elif self.opcode == "j":
+            self.is_jump = True
+            if ("0x" in s[1]):
+                self.BTA = int(s[1], 16)
+            else:
+                self.BTA = s[1]
+
+
+    def decode(self):
+        s = self.instruction.split()
         if self.opcode in self.instructionSet['rtype']:
             self.type = "rtype"
             self.dest = s[1]

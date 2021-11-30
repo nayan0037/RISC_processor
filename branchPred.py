@@ -35,7 +35,7 @@ class branchPred(object):
             if result == "1":
                 self.history[index] = "11"
             else:
-                self.history[index] = "01"
+                self.history[index] = "10"
 
     def predict(self,PC):
         if self.noPred:
@@ -50,7 +50,7 @@ class branchPred(object):
             self.PC.append(PC)
             self.BTA.append(0)
             self.history.append("00")
-            return (0,"0")
+            return (PC+4,"0")
 
 
     def print_branchPred(self):
