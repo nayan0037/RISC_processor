@@ -32,7 +32,11 @@ class execute_stage():
                     ## taken
                     PC = self.instr.PC
                     BTA = PC + int(self.instr.immediate)*4 
-                    if (self.processor.branch_hist.pop(0) != "1" or self.processor.BTA_hist.pop(0) != BTA):
+                    print(self.processor.branch_hist)
+                    print(self.processor.BTA_hist)
+                    pred_value = self.processor.branch_hist[PC]
+                    self.processor.branch_hist.pop(PC)
+                    if (pred_value != "1"):
                         ## flush pipeline
                         self.processor.programCounter = BTA
                         self.processor.pipeline[0] = fetch_stage(instruction_class(),self.processor)
@@ -45,7 +49,10 @@ class execute_stage():
                     ## not taken
                     PC = self.instr.PC
                     BTA = PC + 4 
-                    if (self.processor.branch_hist.pop(0) != "0"):
+                    pred_value = self.processor.branch_hist[PC]
+                    self.processor.branch_hist.pop(PC)
+
+                    if (pred_value != "0"):
                     ## flush half pipeline
                         self.processor.programCounter = BTA
                         self.processor.pipeline[2] = operandRead_stage(instruction_class(),self.processor)

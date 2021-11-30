@@ -21,9 +21,9 @@ class processor(object):
         self.nstall = False
         self.bstall = False
         self.branch_pred = branchPred(5)
-        self.branch_pred.noPred = True
-        self.branch_hist = []
-        self.BTA_hist = []
+        self.branch_pred.noPred = False
+        self.branch_hist = {}
+        self.BTA_hist = {}
         self.pipeline = [None for x in range(6)]
         nop = instruction_class()
         self.pipeline[0] = fetch_stage(nop,self)

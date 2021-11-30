@@ -19,10 +19,10 @@ class fetch_stage(object):
                 (BTA, pred) = self.processor.branch_pred.predict(self.processor.programCounter)
                 if pred == "1": 
                     self.processor.programCounter = BTA
-                    self.processor.BTA_hist.append(BTA) 
+                    self.processor.BTA_hist[self.instr.PC] = BTA 
                 else:
                     self.processor.programCounter += 4
-                self.processor.branch_hist.append(pred)
+                self.processor.branch_hist[self.instr.PC ] = pred 
                 self.instr.opr2Value = self.instr.immediate
                 self.processor.speculative = True
         
